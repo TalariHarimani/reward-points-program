@@ -1,60 +1,276 @@
-# Reward Points API
+# Reward Points Calculator API
 
 ## Overview
 
-Spring Boot REST API that calculates customer reward points based on transactions.
+The Reward Points Calculator API is a Spring Boot REST application that calculates customer reward points based on
+transaction amounts.
 
-## Reward Calculation
+The application retrieves customer transactions from an H2 in-memory database, calculates reward points according to the
+business rules, groups rewards by month and year, and returns both monthly and total reward summaries.
 
-- 1 point for every dollar spent between $50 and $100
-- 2 points for every dollar spent above $100
+This project follows a layered architecture using Controller, Service, Repository, DTO, and Entity layers.
+
+---
+
+## Technologies Used
+
+* Java 17
+* Spring Boot 3
+* Spring Data JPA
+* H2 Database
+* Maven
+* JUnit 5
+* Mockito
+* MockMvc
+* Java Stream API
+
+---
+
+## Reward Calculation Rules
+
+Reward points are calculated based on the following rules:
+
+| Transaction Amount | Reward Points                                      |
+|--------------------|----------------------------------------------------|
+| $50 or less        | 0 Points                                           |
+| $51 - $100         | 1 Point for every dollar over $50                  |
+| Above $100         | 2 Points for every dollar over $100 plus 50 Points |
+
+### Example
+
+Transaction Amount = $120
+
+Reward Points:
+
+* First $50 = 0 points
+* Next $50 = 50 points
+* Remaining $20 = 40 points
+
+Total Reward Points = 90
+
+---
+
+## Project Architecture
+
+com.reward_points
+
+controller
+service
+repository
+entity
+dto
+exception
+resources
+
+---
+
+## Database
+
+The application uses an H2 in-memory database.
+
+### Features
+
+* Lightweight
+* No installation required
+* Automatically initialized during application startup
+* Suitable for development and testing
+
+### Database Initialization
+
+The database is populated automatically using:
+
+* schema.sql
+* data.sql
+
+---
+
+## Sample Data
+
+The application loads sample customer and transaction data from data.sql.
+
+### Customers
+
+* Hari
+* Nari
+* Mani
+* Tharun
+* Haritha
+* Thanu
+* Kaushik
+* Sailu
+* Suguna
+* Subbu
+
+### Transactions
+
+The project contains 10 sample transaction records distributed across multiple dates and transaction amounts to
+validate:
+
+* Monthly reward calculations
+* Total reward calculations
+* Different reward slabs
+* Stream API aggregation
+
+Transaction dates are generated dynamically using DATEADD() and are not hardcoded.
+
+---
+
+## REST API Endpoints
+
+### 1. Get Rewards By Customer
+
+Endpoint:
+
+GET /api/rewards/customer/{customerId}
 
 Example:
 
-Purchase = $120
+GET /api/rewards/customer/1
 
-50 points for $50-$100
+Description:
 
-20 * 2 = 40 points above $100
+Returns monthly and total reward points for a specific customer.
 
-Total = 90 points
+---
 
-## Technologies
+### 2. Get Rewards For All Customers
 
-- Java 17
-- Spring Boot
-- Spring Data JPA
-- H2 Database
-- JUnit 5
-- Mockito
-
-## Endpoints
+Endpoint:
 
 GET /api/rewards/all
 
-Returns rewards for all customers.
+Description:
 
-GET /api/rewards/{customerId}
+Returns reward details for all customers.
 
-Returns monthly and total rewards.
+---
+
+### 3. Get Reward Points By Transaction
+
+Endpoint:
 
 GET /api/rewards/transaction/{transactionId}
 
-Returns reward points for transaction.
+Description:
 
-## Running
+Returns reward points calculated for a specific transaction.
 
-mvn clean install
+---
 
-mvn spring-boot:run
+## Sample Response
+
+{
+"customerId": 1,
+"customerName": "Hari",
+"monthlyRewards": [
+{
+"month": "2026-05",
+"rewardPoints": 250
+},
+{
+"month": "2026-06",
+"rewardPoints": 115
+}
+],
+"totalRewards": 365
+}
+
+---
+
+## Exception Handling
+
+Global exception handling is implemented using @RestControllerAdvice.
+
+Handled Scenarios:
+
+* Customer not found
+* Transaction not found
+* Invalid input
+* Unexpected server errors
+
+---
+
+## Validation
+
+Input validation is implemented for REST API requests.
+
+Examples:
+
+* Invalid customer id
+* Invalid transaction id
+
+---
 
 ## Testing
 
-mvn test
+### Unit Tests
+
+JUnit 5 and Mockito are used to test business logic.
+
+Test Coverage Includes:
+
+* Amount below $50
+* Amount equal to $50
+* Amount between $50 and $100
+* Amount equal to $100
+* Amount greater than $100
+* Boundary conditions
+* Negative values
+* Exception scenarios
+
+Total Unit Test Cases: 9+
+
+---
+
+### Integration Tests
+
+MockMvc is used for API integration testing.
+
+Covered Scenarios:
+
+* Valid customer rewards
+* Invalid customer
+* All customer rewards
+* Transaction reward retrieval
+* API response validation
+
+---
+
+## Running the Application
+
+Build Project:
+
+mvn clean install
+
+Run Application:
+
+mvn spring-boot:run
+
+Application URL:
+
+http://localhost:8080
+
+---
 
 ## H2 Console
 
+URL:
+
 http://localhost:8080/h2-console
 
-JDBC URL:
-jdbc:h2:mem:rewarddb
+Default Configuration:
+
+JDBC URL: jdbc:h2:mem:testdb
+
+---
+
+## Running Tests
+
+Execute all tests:
+
+mvn test
+
+---
+
+
+

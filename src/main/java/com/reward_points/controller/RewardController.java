@@ -3,6 +3,8 @@ package com.reward_points.controller;
 import com.reward_points.dto.CustomerRewardResponseDTO;
 
 import com.reward_points.service.RewardService;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/rewards")
+@Validated
 public class RewardController {
 
     private final RewardService rewardService;
@@ -51,7 +54,9 @@ public class RewardController {
      */
     @GetMapping("customer/{customerId}")
     public CustomerRewardResponseDTO getCustomerRewards(
-            @PathVariable Long customerId) {
+            @PathVariable
+            @Positive(message = "Customer Id must be greater than zero")
+            Long customerId) {
 
         return rewardService.getCustomerRewards(customerId);
     }
@@ -84,7 +89,9 @@ public class RewardController {
      */
     @GetMapping("/transaction/{transactionId}")
     public Long getTransactionReward(
-            @PathVariable Long transactionId) {
+            @PathVariable
+            @Positive(message = "Transaction Id must be greater than zero")
+            Long transactionId) {
 
         return rewardService.calculateRewardPoints(
                 transactionId);

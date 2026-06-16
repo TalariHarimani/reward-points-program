@@ -1,48 +1,62 @@
 package com.reward_points.dto;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 /**
  * DTO representing reward points earned by a customer
  * for a particular month.
  */
 public class MonthlyRewardDTO {
 
-    private String month;
+    /**
+     * Month and year in YYYY-MM format.
+     */
+    @NotBlank(message = "Month and year cannot be blank")
+    private String monthYear;
+
+    /**
+     * Reward points earned for the month.
+     */
+    @NotNull(message = "Reward points cannot be null")
+    @PositiveOrZero(message = "Reward points cannot be negative")
     private Long rewardPoints;
 
     /**
-     * Default Constructor.
+     * Default constructor.
      */
     public MonthlyRewardDTO() {
     }
 
     /**
-     * Parameterized Constructor.
+     * Parameterized constructor.
      *
-     * @param month        month and year
+     * @param monthYear    month and year
      * @param rewardPoints reward points earned
      */
-    public MonthlyRewardDTO(String month, Long rewardPoints) {
-        this.month = month;
+    public MonthlyRewardDTO(String monthYear, Long rewardPoints) {
+        this.monthYear = monthYear;
         this.rewardPoints = rewardPoints;
     }
 
     /**
-     * Returns month.
+     * Returns month and year.
      *
-     * @return month
+     * @return month and year
      */
-    public String getMonth() {
-        return month;
+    public String getMonthYear() {
+        return monthYear;
     }
 
     /**
-     * Sets month.
+     * Sets month and year.
      *
-     * @param month month
+     * @param monthYear month and year
      */
-    public void setMonth(String month) {
-        this.month = month;
+    public void setMonthYear(String monthYear) {
+        this.monthYear = monthYear;
     }
 
     /**
@@ -57,9 +71,17 @@ public class MonthlyRewardDTO {
     /**
      * Sets reward points.
      *
-     * @param rewardPoints reward points
+     * @param rewardPoints reward points earned
      */
     public void setRewardPoints(Long rewardPoints) {
         this.rewardPoints = rewardPoints;
+    }
+
+    @Override
+    public String toString() {
+        return "RewardSummaryDTO{" +
+                "monthYear='" + monthYear + '\'' +
+                ", rewardPoints=" + rewardPoints +
+                '}';
     }
 }
