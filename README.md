@@ -145,34 +145,36 @@ Returns reward details for all customers.
 
 ---
 
-### 3. Get Reward Points By Transaction
-
-Endpoint:
-
-GET /api/rewards/transaction/{transactionId}
-
-Description:
-
-Returns reward points calculated for a specific transaction.
-
----
-
 ## Sample Response
 
+Output when customer has transactions
 {
 "customerId": 1,
 "customerName": "Hari",
 "monthlyRewards": [
 {
-"month": "2026-05",
+"monthYear": "2026-04",
 "rewardPoints": 250
 },
 {
-"month": "2026-06",
-"rewardPoints": 115
+"monthYear": "2026-05",
+"rewardPoints": 25
+},
+{
+"monthYear": "2026-06",
+"rewardPoints": 90
 }
 ],
-"totalRewards": 365
+"totalRewards": 365,
+"message": "Rewards calculated successfully"
+}
+Output when customer has no transactions
+{
+"customerId": 8,
+"customerName": "Sailu",
+"monthlyRewards": [],
+"totalRewards": 0,
+"message": "Customer has no transactions available"
 }
 
 ---
@@ -184,20 +186,8 @@ Global exception handling is implemented using @RestControllerAdvice.
 Handled Scenarios:
 
 * Customer not found
-* Transaction not found
 * Invalid input
 * Unexpected server errors
-
----
-
-## Validation
-
-Input validation is implemented for REST API requests.
-
-Examples:
-
-* Invalid customer id
-* Invalid transaction id
 
 ---
 

@@ -74,26 +74,4 @@ public class RewardController {
 
         return rewardService.getAllCustomerRewards();
     }
-
-    /**
-     * Calculates reward points for a specific transaction.
-     *
-     * <p>Reward calculation rules:
-     * <ul>
-     *     <li>2 points for every dollar spent above $100</li>
-     *     <li>1 point for every dollar spent between $50 and $100</li>
-     * </ul>
-     *
-     * @param transactionId unique identifier of the transaction
-     * @return calculated reward points for the transaction
-     */
-    @GetMapping("/transaction/{transactionId}")
-    public Long getTransactionReward(
-            @PathVariable
-            @Positive(message = "Transaction Id must be greater than zero")
-            Long transactionId) {
-
-        return rewardService.calculateRewardPoints(
-                transactionId);
-    }
 }

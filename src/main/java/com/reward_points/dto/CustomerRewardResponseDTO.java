@@ -24,6 +24,8 @@ public class CustomerRewardResponseDTO {
     @NotNull(message = "Total rewards cannot be null")
     private Long totalRewards;
 
+    private String message;
+
     /**
      * Returns customer id.
      *
@@ -94,5 +96,13 @@ public class CustomerRewardResponseDTO {
      */
     public void setTotalRewards(Long totalRewards) {
         this.totalRewards = totalRewards;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

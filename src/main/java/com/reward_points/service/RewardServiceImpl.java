@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ public class RewardServiceImpl implements RewardService {
     @Override
     public CustomerRewardResponseDTO getCustomerRewards(Long customerId) {
 
+
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -54,10 +56,19 @@ public class RewardServiceImpl implements RewardService {
         List<Transaction> transactions =
                 transactionRepository.findByCustomerId(customerId);
 
+        CustomerRewardResponseDTO response =
+                new CustomerRewardResponseDTO();
+
+        response.setCustomerId(customer.getCustomerId());
+        response.setCustomerName(customer.getCustomerName());
+
         if (transactions.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "No transactions found for customer : "
-                            + customerId);
+
+            response.setMonthlyRewards(Collections.emptyList());
+            response.setTotalRewards(0L);
+            response.setMessage("Customer has no transactions available");
+
+            return response;
         }
 
         Map<YearMonth, Long> monthlyRewards =
@@ -70,13 +81,11 @@ public class RewardServiceImpl implements RewardService {
                                         transaction ->
                                                 calculatePoints(
                                                         transaction.getAmount())
-                                )
-                        ));
+                                )));
 
-        List<MonthlyRewardDTO> monthlyRewardList =
+        List<MonthlyRewardDTO> rewardSummary =
                 monthlyRewards.entrySet()
                         .stream()
-                        .sorted(Map.Entry.comparingByKey())
                         .map(entry ->
                                 new MonthlyRewardDTO(
                                         entry.getKey().toString(),
@@ -84,20 +93,18 @@ public class RewardServiceImpl implements RewardService {
                         .toList();
 
         long totalRewards =
-                monthlyRewardList.stream()
-                        .mapToLong(MonthlyRewardDTO::getRewardPoints)
+                rewardSummary.stream()
+                        .mapToLong(
+                                MonthlyRewardDTO::getRewardPoints)
                         .sum();
 
-        CustomerRewardResponseDTO response =
-                new CustomerRewardResponseDTO();
-
-        response.setCustomerId(customer.getCustomerId());
-        response.setCustomerName(customer.getCustomerName());
-        response.setMonthlyRewards(monthlyRewardList);
+        response.setMonthlyRewards(rewardSummary);
         response.setTotalRewards(totalRewards);
+        response.setMessage("Rewards calculated successfully");
 
         return response;
     }
+
 
     /**
      * Returns rewards for all customers.
