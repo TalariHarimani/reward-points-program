@@ -4,11 +4,13 @@ package com.reward_points.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Data;
 
 /**
  * DTO representing reward points earned by a customer
  * for a particular month.
  */
+@Data
 public class MonthlyRewardDTO {
 
     /**
